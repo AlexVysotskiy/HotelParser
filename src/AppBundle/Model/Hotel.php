@@ -130,7 +130,7 @@ class Hotel extends Model
         $this->setAddress($params['address']);
         $this->setStars($params['stars']);
         $this->setPhone($params['phone']);
-        $this->getUri($params['uri']);
+        $this->setUri($params['uri']);
     }
 
     /**

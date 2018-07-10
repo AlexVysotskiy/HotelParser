@@ -32,7 +32,7 @@ class CsvFileSource extends DataSource
      */
     public function setFilePath($filePath)
     {
-        if (is_readable($filePath)) {
+        if (is_readable($filePath) && is_file($filePath)) {
             $this->filePath = $filePath;
         } else {
             throw new DataSourceException('Provided CSV file is not readable!');

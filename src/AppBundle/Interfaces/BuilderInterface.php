@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\ReadWriteBuilder;
+namespace AppBundle\Interfaces;
 
 use AppBundle\DataSource;
 use AppBundle\Model;
@@ -22,4 +22,14 @@ interface BuilderInterface
      * @return Model
      */
     public function buildPrototype();
+
+    /**
+     * @return SortingInterface | null
+     */
+    public function buildSorter();
+
+    /**
+     * @return FilteringInterface | null
+     */
+    public function buildFilter();
 }

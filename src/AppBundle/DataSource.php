@@ -43,7 +43,7 @@ abstract class DataSource
         $result = [];
 
         while ($data = $this->next()) {
-
+            
             if ($this->validate($data)) {
                 $result[] = $this->wrap($data);
             }
@@ -82,9 +82,10 @@ abstract class DataSource
 
             if (isset($item[$column])) {
 
-                while (($validator = next($validators)) && $result) {
-
-                    $result &= $validator->validate($item[$column]);
+                while (($validator = current($validators)) && $result) {
+                    
+                    next($validators);
+                    $result = $result && $validator->validate($item[$column]);
                 }
 
             } else {
@@ -93,7 +94,7 @@ abstract class DataSource
             }
 
         }
-
+        
         return $result;
     }
 

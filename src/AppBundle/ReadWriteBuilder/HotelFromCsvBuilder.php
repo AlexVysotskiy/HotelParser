@@ -10,9 +10,9 @@ use AppBundle\OutputFormatter\OutputFormatterFactory;
 use AppBundle\Validator\IntegerRangeValidator;
 use AppBundle\Validator\NameValidator;
 use AppBundle\Validator\UriValidator;
+use AppBundle\Interfaces\BuilderInterface;
 
-class HotelFromCsvBuilder implements BuilderInterface
-{
+class HotelFromCsvBuilder implements BuilderInterface {
 
     /**
      * @var string
@@ -25,26 +25,32 @@ class HotelFromCsvBuilder implements BuilderInterface
     private $outputFormatters = [];
 
     /**
+     * @var array 
+     */
+    private $sorting = [];
+
+    /**
+     * @var array 
+     */
+    private $filtering = [];
+
+    /**
      * @param string $filePath
      * @param array $outputFormatters
      */
-    public function __construct($filePath, $outputFormatters)
-    {
+    public function __construct($filePath, $outputFormatters, $sorting = [], $filtering = []) {
+
         $this->filePath = $filePath;
-
-        if ($outputFormatters) {
-            $this->outputFormatters = is_array($outputFormatters) ? $outputFormatters : [$outputFormatters];
-        } else {
-            throw new BuilderException('Required params are missed!');
-        }
-
+        $this->outputFormatters = is_array($outputFormatters) ? $outputFormatters : [$outputFormatters];
+        $this->sorting = $sorting;
+        $this->filtering = $filtering;
     }
 
     /**
      * @return DataSource
      */
-    public function buildDataSource()
-    {
+    public function buildDataSource() {
+
         /* @var CsvFileSource $dataSource */
         $dataSource = DataSourceFactory::getDataSource('csv');
 
@@ -61,8 +67,8 @@ class HotelFromCsvBuilder implements BuilderInterface
     /**
      * @return OutputFormatter[]
      */
-    public function buildOutputFormatters()
-    {
+    public function buildOutputFormatters() {
+
         $list = [];
 
         $destinationFolder = pathinfo($this->filePath);
@@ -70,10 +76,11 @@ class HotelFromCsvBuilder implements BuilderInterface
         foreach ($this->outputFormatters as $type) {
 
             /* @var OutputFormatter $formatter */
-            $formatter = OutputFormatterFactory::getOutputFormatter($type);
-            $formatter->setDestination(new OutputFormatter\Destination($destinationFolder['dirname'] . DIRECTORY_SEPARATOR . $destinationFolder['filename'] . '.' . $type));
+            if ($formatter = OutputFormatterFactory::getOutputFormatter($type)) {
 
-            $list[$type] = $formatter;
+                $formatter->setDestination(new OutputFormatter\Destination($destinationFolder['dirname'] . DIRECTORY_SEPARATOR . $destinationFolder['filename'] . '.' . $type));
+                $list[$type] = $formatter;
+            }
         }
 
         return $list;
@@ -82,8 +89,27 @@ class HotelFromCsvBuilder implements BuilderInterface
     /**
      * @return Model
      */
-    public function buildPrototype()
-    {
+    public function buildPrototype() {
         return new Hotel();
     }
+
+    /**
+     * @return \AppBundle\Interfaces\SortingInterface | null
+     */
+    public function buildSorter() {
+
+        if ($this->sorting) {
+            list($field, $order) = $this->sorting;
+            return new \AppBundle\ModelSorter($field, $order);
+        }
+    }
+
+    public function buildFilter() {
+
+        if ($this->filtering) {
+            list($field, $operation, $value) = $this->filtering;
+            return new \AppBundle\ModelFilter($field, $operation, $value);
+        }
+    }
+
 }
