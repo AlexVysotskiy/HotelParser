@@ -1,77 +1,100 @@
-Symfony Standard Edition
-========================
+# Hotel parser
 
-**WARNING**: This distribution does not support Symfony 4. See the
-[Installing & Setting up the Symfony Framework][15] page to find a replacement
-that fits you best.
+Console application for parsing hotel data from different sources and writing it into different formats.
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+## Getting Started
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+This project based on Symfony 3.4.
 
-What's inside?
---------------
+### Installing
 
-The Symfony Standard Edition is configured with the following defaults:
+To set up application run following command
 
-  * An AppBundle you can use to start coding;
+```
+composer install
+```
 
-  * Twig as the only configured template engine;
+## Execution of command
 
-  * Doctrine ORM/DBAL;
+To run command type
 
-  * Swiftmailer;
+```
+php bin/console app:read_csv -o OUTPUT_FORMATS -f PATH/TO/FILE -s SORTING -r 'FIELD OPERATION VALUE'
+```
 
-  * Annotations enabled for everything.
+Output can be found in source folder.
 
-It comes pre-configured with the following bundles:
+Below you can find more information about options
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+### -o
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+```
+-o - type of the output format. Supported values: json, xml, yaml
+```
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
+This options can take several values, for example
 
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
+```
+-o json -o xml -o yaml
+```
 
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
+### -f
 
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
+Path to source file, i.e.
 
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
+```
+-f ./app/Resources/csv/hotels.csv
+```
 
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
+### -s
 
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
+This parameter is optional. If specified, sorts items in requested order. Example of usage
 
-  * [**SensioGeneratorBundle**][13] (in dev env) - Adds code generation
-    capabilities
+```
+-s uri:DESC
+```
 
-  * [**WebServerBundle**][14] (in dev env) - Adds commands for running applications
-    using the PHP built-in web server
+Supported fields
 
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
+```
+name, address, stars, phone, uri 
+```
 
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
+Supported orders
 
-Enjoy!
+```
+DESC, ASC
+```
 
-[1]:  https://symfony.com/doc/3.4/setup.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.4/doctrine.html
-[8]:  https://symfony.com/doc/3.4/templating.html
-[9]:  https://symfony.com/doc/3.4/security.html
-[10]: https://symfony.com/doc/3.4/email.html
-[11]: https://symfony.com/doc/3.4/logging.html
-[13]: https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html
-[14]: https://symfony.com/doc/current/setup/built_in_web_server.html
-[15]: https://symfony.com/doc/current/setup.html
+### -r
+
+This parameter is optional. If specified, filters items in requested way. Example of usage
+
+```
+-r 'name like Marino'
+```
+
+Supported fields
+
+```
+name, address, stars, phone, uri 
+```
+
+Supported operations
+
+```
+eq, neq, lt, lte, gt, gte, like
+```
+
+## Full example
+
+```
+ php bin/console app:read_csv -o json -o xml -f ./app/Resources/csv/hotels.csv -s name:ASC -r 'name like Marino'
+```
+
+## Running the tests
+
+To run tests type in terminal
+```
+vendor/bin/simple-phpunit
+```
