@@ -3,6 +3,7 @@
 namespace AppBundle;
 
 use AppBundle\OutputFormatter\Destination;
+use AppBundle\Exceptions\OutputFormatterException;
 
 abstract class OutputFormatter
 {
